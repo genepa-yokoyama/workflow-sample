@@ -19,4 +19,13 @@ class Test
         return $this->name;
     }
 
+    public function sayHello(): string
+    {
+        return "Hello, {$this->name}!";
+    }
+
+    public function sayGoodbye(): string
+    {
+        return "Goodbye, {$this->name}!";
+    }
 }
