@@ -54,7 +54,7 @@ jobs:
             "opened"|"reopened")
               MESSAGE+="が作成されました"
               ;;
-            "edited"|"review_requested")
+            "edited"|"review_requested"|"assigned")
               MESSAGE+="が更新されました"
               ;;
             "synchronize")
