@@ -33,7 +33,7 @@ jobs:
               fi
               ;;
             *)
-              GITHUB_USERS=${{ toJson(github.event.pull_request.requested_reviewers.*.login) }}'
+              GITHUB_USERS='${{ toJson(github.event.pull_request.requested_reviewers.*.login) }}'
               ;;
           esac
 
