@@ -1,0 +1,29 @@
+name: Notify Chatwork on PR Events
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - closed
+    branches:
+      - main
+      - develop
+  issue_comment:
+
+jobs:
+  call-chatwork-notification:
+    if: >- 
+      github.event.issue.pull_request == true
+      || github.event.pull_request.merged == true
+      || github.event.action == 'opened'
+      || github.event.action == 'edited'
+      || github.event.action == 'synchronize'
+      || github.event.action == 'closed'
+    uses: GenerationPass/workflow-chatwork-notification/.github/workflows/chatwork.yml@main
+    secrets:
+      CHATWORK_TOKEN: ${{ secrets.CHATWORK_BOT_TOKEN }}
+      CHATWORK_ROOM_ID: ${{ secrets.CHATWORK_ROOM_ID }}
+    with:
+      USER_MAPPING: '{"genepa-yokoyama":5251227 }'
