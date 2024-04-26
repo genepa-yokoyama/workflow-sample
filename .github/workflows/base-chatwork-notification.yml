@@ -32,7 +32,7 @@ jobs:
                 GITHUB_USERS='[]'
               fi
               ;;
-            "opened"|"reopened"|"edited"|"review_requested"|"synchronize"|"assigned")
+            *)
               GITHUB_USERS=${{ toJson(github.event.pull_request.requested_reviewers.*.login) }}'
               ;;
           esac
@@ -52,25 +52,70 @@ jobs:
             fi
           done
 
-          MESSAGE=$(printf "[info][title]プルリクエスト通知: ${{ github.event.pull_request.title }}[/title]\nプルリクエスト")
-          case "${{ github.event.action }}" in
-            "opened"|"reopened")
-              MESSAGE+="が作成されました"
+          MESSAGE=$(printf "[info][title]プルリクエスト通知: ${{ github.event.pull_request.title }}[/title]\n")
+          case "${{ github.event.type }}" in
+            "pull_request")
+              MESSAGE+="プルリクエスト"
+              case "${{ github.event.action }}" in
+                "opened"|"reopened")
+                  MESSAGE+="が作成されました"
+                  ;;
+                "edited"|"review_requested"|"assigned")
+                  MESSAGE+="が更新されました"
+                  ;;
+                "synchronize")
+                  MESSAGE+="に新しいコミットがプッシュされました。"
+                  ;;
+                "closed")
+                  if [ "${{ github.event.pull_request.merged }}" == "true" ]; then
+                    MESSAGE+="がマージされました"
+                  else
+                    MESSAGE+="が閉じられました"
+                  fi
+                  ;;
+                *)
+                  MESSAGE+=":${{ github.event.action }"
+              esac
               ;;
-            "edited"|"review_requested"|"assigned")
-              MESSAGE+="が更新されました"
+            "pull_request_review")
+              MESSAGE+="プルリクエストに対するレビュー"
+              case "${{ github.event.action }}" in
+                "submitted")
+                  MESSAGE+="が作成されました"
+                  ;;
+                  *)
+                  MESSAGE+="が更新されました"
+                  MESSAGE+=":${{ github.event.action }"
+              esac
               ;;
-            "synchronize")
-              MESSAGE+="に新しいコミットがプッシュされました。"
+            "pull_request_review_comment")
+              MESSAGE+="プルリクエストに対するコメント"
+              case "${{ github.event.action }}" in
+                "created")
+                  MESSAGE+="が作成されました"
+                  ;;
+                "edited")
+                  MESSAGE+="が更新されました"
+                  ;;
+                *)
+                  MESSAGE+=":${{ github.event.action }"
+              esac
               ;;
-            "closed")
-              if [ "${{ github.event.pull_request.merged }}" == "true" ]; then
-                MESSAGE+="がマージされました"
-              else
-                MESSAGE+="が閉じられました"
-              fi
+            "issue_comment")
+              MESSAGE+="[ISSUE]プルリクエストに対するコメント"
+              case "${{ github.event.action }}" in
+                "created")
+                  MESSAGE+="が作成されました"
+                  ;;
+                "edited")
+                  MESSAGE+="が更新されました"
+                  ;;
+                *)
+                  MESSAGE+=":${{ github.event.action }"
+              esac
               ;;
           esac
+
           MESSAGE+=$(printf "\n\n${{ github.event.pull_request.html_url }}")
           MESSAGE+=$(printf "\nFROM: ${{ github.event.pull_request.user.login }}")
           MESSAGE+=$(printf "[/info]")
