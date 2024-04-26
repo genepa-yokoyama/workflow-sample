@@ -24,6 +24,9 @@ jobs:
           CHATWORK_ROOM_ID: ${{ secrets.CHATWORK_ROOM_ID }}
           USER_MAPPING: ${{ inputs.USER_MAPPING }}
         run: |
+          ACTION_TYPE="${{ github.event.action }}"
+          echo "ACTION_TYPE: $ACTION_TYPE"
+
           if [ "${{ github.event.pull_request.merged }}" == "true" ]; then
             GITHUB_USERS='["${{ github.event.pull_request.user.login }}"]'
           else
@@ -46,14 +49,12 @@ jobs:
           done
 
           MESSAGE=$(printf "[info][title]プルリクエスト通知: ${{ github.event.pull_request.title }}[/title]\nプルリクエスト")
-          ACTION_TYPE="${{ github.event.action }}"
-          echo "ACTION_TYPE: $ACTION_TYPE"
           
           case "$ACTION_TYPE" in
-            "opened")
+            "opened"|"reopened")
               MESSAGE+="が作成されました"
               ;;
-            "edited")
+            "edited"|"review_requested")
               MESSAGE+="が更新されました"
               ;;
             "synchronize")
