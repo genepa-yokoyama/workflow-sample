@@ -3,8 +3,20 @@
 
 class Test
 {
-    public function __construct()
+    public function __construct(
+        protected string $name = 'World',
+    )
     {
-        echo 'Hello World';
     }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
 }
