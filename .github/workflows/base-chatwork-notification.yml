@@ -24,10 +24,10 @@ jobs:
           CHATWORK_ROOM_ID: ${{ secrets.CHATWORK_ROOM_ID }}
           USER_MAPPING: ${{ inputs.USER_MAPPING }}
         run: |
-          if [ "${{ github.event.pull_request.merged }}" == "true" ]; then
+          if [ ${{ github.event.pull_request.merged }} ]; then
             GITHUB_USERS='["${{ github.event.pull_request.user.login }}"]'
           else
-            GITHUB_USERS="${{ toJson(github.event.pull_request.requested_reviewers.*.login) }}"
+            GITHUB_USERS=${{ toJson(github.event.pull_request.requested_reviewers.*.login) }}
           fi
 
           GITHUB_USER_IDS=$(echo "$GITHUB_USERS" | jq -r '.[]')
