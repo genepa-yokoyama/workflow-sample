@@ -1,7 +1,10 @@
 <?php
-/*
-test
-*/
-$test = '1234567890';
 
-echo $test;
+
+class Test
+{
+    public function __construct()
+    {
+        echo 'Hello World';
+    }
+}
