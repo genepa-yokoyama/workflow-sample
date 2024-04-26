@@ -24,11 +24,18 @@ jobs:
           CHATWORK_ROOM_ID: ${{ secrets.CHATWORK_ROOM_ID }}
           USER_MAPPING: ${{ inputs.USER_MAPPING }}
         run: |
-          if [ ${{ github.event.pull_request.merged }} ]; then
-            GITHUB_USERS='["${{ github.event.pull_request.user.login }}"]'
-          else
-            GITHUB_USERS=${{ toJson(github.event.pull_request.requested_reviewers.*.login) }}
-          fi
+          case "${{ github.event.action }}" in
+            "closed")
+              if [ ${{ github.event.pull_request.merged }} == true ]; then
+                GITHUB_USERS='["${{ github.event.pull_request.user.login }}"]'
+              else
+                GITHUB_USERS='[]'
+              fi
+              ;;
+            "opened"|"reopened"|"edited"|"review_requested"|"synchronize"|"assigned")
+              GITHUB_USERS=${{ toJson(github.event.pull_request.requested_reviewers.*.login) }}
+              ;;
+          esac
 
           GITHUB_USER_IDS=$(echo "$GITHUB_USERS" | jq -r '.[]')
           TO_PART=""
