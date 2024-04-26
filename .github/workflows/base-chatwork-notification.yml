@@ -74,7 +74,7 @@ jobs:
                   fi
                   ;;
                 *)
-                  MESSAGE+=":${{ github.event.action }"
+                  MESSAGE+=":${{ github.event.action }}"
               esac
               ;;
             "pull_request_review")
@@ -84,8 +84,7 @@ jobs:
                   MESSAGE+="が作成されました"
                   ;;
                   *)
-                  MESSAGE+="が更新されました"
-                  MESSAGE+=":${{ github.event.action }"
+                  MESSAGE+="が更新されました: ${{ github.event.action }}"
               esac
               ;;
             "pull_request_review_comment")
@@ -98,7 +97,7 @@ jobs:
                   MESSAGE+="が更新されました"
                   ;;
                 *)
-                  MESSAGE+=":${{ github.event.action }"
+                  MESSAGE+=":${{ github.event.action }}"
               esac
               ;;
             "issue_comment")
@@ -111,7 +110,7 @@ jobs:
                   MESSAGE+="が更新されました"
                   ;;
                 *)
-                  MESSAGE+=":${{ github.event.action }"
+                  MESSAGE+=":${{ github.event.action }}"
               esac
               ;;
           esac
