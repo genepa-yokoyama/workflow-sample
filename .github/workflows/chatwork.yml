@@ -11,6 +11,9 @@ on:
       - main
       - develop
   issue_comment:
+    types:
+      - created
+      - edited
 
 jobs:
   call-chatwork-notification:
