@@ -17,6 +17,13 @@ on:
     types:
       - created
       - edited
+  pull_request_review:
+    types:
+      - submitted
+  pull_request_review_comment:
+    types:
+      - created
+      - edited
 
 jobs:
   call-chatwork-notification:
