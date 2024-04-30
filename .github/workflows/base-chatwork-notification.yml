@@ -53,6 +53,7 @@ jobs:
           done
 
           MESSAGE=$(printf "[info][title]プルリクエスト通知: ${{ github.event.pull_request.title }}[/title]\n")
+          MESSAGE+="debug: ${{ toJson(github.event) }}"
           case "${{ github.event.type }}" in
             "pull_request")
               MESSAGE+="プルリクエスト"
