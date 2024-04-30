@@ -53,6 +53,7 @@ jobs:
           done
 
           MESSAGE=$(printf "[info][title]プルリクエスト通知: ${{ github.event.pull_request.title }}[/title]\n")
+          MESSAGE+="debug: ${{ toJson(github.event) }}"
           case "${{ github.event.type }}" in
             "pull_request")
               MESSAGE+="プルリクエスト"
@@ -83,7 +84,7 @@ jobs:
                 "submitted")
                   MESSAGE+="が作成されました"
                   ;;
-                  *)
+                *)
                   MESSAGE+="が更新されました: ${{ github.event.action }}"
               esac
               ;;
@@ -113,6 +114,8 @@ jobs:
                   MESSAGE+=":${{ github.event.action }}"
               esac
               ;;
+            *)
+              MESSAGE+="不明なEventOrAction:${{ github.event.type }}:${{ github.event.action }}"
           esac
 
           MESSAGE+=$(printf "\n\n${{ github.event.pull_request.html_url }}")
