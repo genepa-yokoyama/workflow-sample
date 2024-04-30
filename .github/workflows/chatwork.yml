@@ -42,4 +42,4 @@ jobs:
       CHATWORK_TOKEN: ${{ secrets.CHATWORK_BOT_TOKEN }}
       CHATWORK_ROOM_ID: ${{ secrets.CHATWORK_ROOM_ID }}
     with:
-      USER_MAPPING: '{"genepa-yokoyama":5251227 }'
+      USER_MAPPING: ${{ vars.CHATWORK_USER_MAPPING }}
