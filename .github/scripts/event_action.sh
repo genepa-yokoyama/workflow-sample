@@ -1,15 +1,15 @@
 #!/bin/bash
 
 case "${{ github.event.action }}" in
-"closed")
-    if [ ${{ github.event.pull_request.merged }} == true ]; then
-        GITHUB_USERS='["${{ github.event.pull_request.user.login }}"]'
-    else
-        GITHUB_USERS='[]'
-    fi
-    ;;
-*)
-    GITHUB_USERS='${{ toJson(github.event.pull_request.requested_reviewers.*.login) }}'
+    "closed")
+        if [ ${{ github.event.pull_request.merged }} == true ]; then
+            GITHUB_USERS='["${{ github.event.pull_request.user.login }}"]'
+        else
+            GITHUB_USERS='[]'
+        fi
+        ;;
+    *)
+        GITHUB_USERS='${{ toJson(github.event.pull_request.requested_reviewers.*.login) }}'
 esac
 
 GITHUB_USER_IDS=$(echo "$GITHUB_USERS" | jq -r '.[]')
@@ -92,9 +92,9 @@ MESSAGE+=$(printf "[/info]")
 
 
 curl --request POST \
---url https://api.chatwork.com/v2/rooms/${CHATWORK_ROOM_ID}/messages \
---header "accept: application/json" \
---header "content-type: application/x-www-form-urlencoded" \
---header "x-chatworktoken: ${CHATWORK_TOKEN}" \
---data-urlencode "body=${TO_PART}${MESSAGE}" \
---data self_unread=1
+    --url https://api.chatwork.com/v2/rooms/${CHATWORK_ROOM_ID}/messages \
+    --header "accept: application/json" \
+    --header "content-type: application/x-www-form-urlencoded" \
+    --header "x-chatworktoken: ${CHATWORK_TOKEN}" \
+    --data-urlencode "body=${TO_PART}${MESSAGE}" \
+    --data self_unread=1
