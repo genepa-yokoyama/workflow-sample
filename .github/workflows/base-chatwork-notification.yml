@@ -90,6 +90,8 @@ jobs:
                       MESSAGE+="DEBUG[pull_request: ${{ github.event.action }}]"
                   esac
               fi
+              MESSAGE+=$(printf "\n\n${{ github.event.pull_request.html_url }}")
+              MESSAGE+=$(printf "\nFROM: ${{ github.event.pull_request.user.login }}")
           # プルリクエストコメント
           elif [ -n "${{ github.event.comment }}" ] && [ -n "${{ github.event.issue.pull_request }}" ]; then
               MESSAGE+="[ISSUE]プルリクエストに対するコメント"
@@ -103,16 +105,15 @@ jobs:
               *)
                   MESSAGE+="DEBUG[issue_comment: ${{ github.event.action }}]"
               esac
+              MESSAGE+=$(printf "\n\n${{ github.event.comment.html_url }}")
+              MESSAGE+=$(printf "\nFROM: ${{ github.event.comment.user.login }}")
           else
               MESSAGE+="DEBUG[github.event: ${{ github.event.action }}]"
               MESSAGE+="[/info][info][title]DEBUG: github.event[/title]"
               MESSAGE+="${{ toJson(github.event) }}"
-              MESSAGE+="[/info][info]"
           fi
 
-          MESSAGE+=$(printf "\n\n${{ github.event.pull_request.html_url }}")
-          MESSAGE+=$(printf "\nFROM: ${{ github.event.pull_request.user.login }}")
-          MESSAGE+=$(printf "[/info]")
+          MESSAGE+="[/info]"
 
 
           curl --request POST \
