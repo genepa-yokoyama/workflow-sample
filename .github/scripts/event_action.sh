@@ -1,3 +1,5 @@
+#!/bin/bash
+
 case "${{ github.event.action }}" in
 "closed")
     if [ ${{ github.event.pull_request.merged }} == true ]; then
