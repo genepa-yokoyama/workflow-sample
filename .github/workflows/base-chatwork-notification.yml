@@ -105,6 +105,10 @@ jobs:
               *)
                   MESSAGE+="DEBUG[issue_comment: ${{ github.event.action }}]"
               esac
+              MESSAGE+=$(printf "\n\n${{ github.event.comment.body:0:30 }}")
+              if [ ${#github.event.comment.body} -gt 30 ]; then
+                MESSAGE+="..."
+              fi
               MESSAGE+=$(printf "\n\n${{ github.event.comment.html_url }}")
               MESSAGE+=$(printf "\nFROM: ${{ github.event.comment.user.login }}")
           else
