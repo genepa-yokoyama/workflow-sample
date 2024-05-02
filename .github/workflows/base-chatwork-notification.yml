@@ -110,7 +110,7 @@ jobs:
           else
               MESSAGE+="DEBUG[github.event: ${{ github.event.action }}]"
               MESSAGE+="[/info][info][title]DEBUG: github.event[/title]"
-              MESSAGE+="${{ toJson(github.event) }}"
+            #   MESSAGE+="${{ toJson(github.event) }}"
           fi
 
           MESSAGE+="[/info]"
