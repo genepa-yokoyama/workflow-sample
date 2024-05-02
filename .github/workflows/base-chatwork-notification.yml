@@ -106,11 +106,11 @@ jobs:
                   MESSAGE+="DEBUG[issue_comment: ${{ github.event.action }}]"
               esac
               BODY = ${{ github.event.comment.body }}
-              BODY = ${BODY:0:30}
+              # BODY = ${BODY:0:30}
               MESSAGE+="[hr]${BODY}"
-              if [ ${#BODY} -gt 30 ]; then
-                MESSAGE+="..."
-              fi
+              # if [ ${#BODY} -gt 30 ]; then
+              #   MESSAGE+="..."
+              # fi
               MESSAGE+=$(printf "\n\n${{ github.event.comment.html_url }}")
               MESSAGE+=$(printf "\nFROM: ${{ github.event.comment.user.login }}")
           else
