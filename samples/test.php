@@ -21,11 +21,11 @@ class Test
 
     public function sayHello(): string
     {
-        return "Hello, {$this->name}!";
+        return "Hello! {$this->name}!";
     }
 
     public function sayGoodbye(): string
     {
-        return "Goodbye, {$this->name}!";
+        return "Goodbye! {$this->name}!";
     }
 }
