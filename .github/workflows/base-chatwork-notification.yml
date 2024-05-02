@@ -54,10 +54,10 @@ jobs:
           MESSAGE=$(printf "[info][title]プルリクエスト通知: ${{ github.event.pull_request.title }}[/title]\n")
 
           # プルリクエスト
-          if [ -n "${{ github.event.pull_request }}" ]; then
+          if [ -v github.event.pull_request ]; then
               MESSAGE+="プルリクエスト"
               # レビュー
-              if [ -n "${{ github.event.review }}" ]; then
+              if [ -v github.event.review ]; then
                   MESSAGE+="に対するレビュー"
                   case "${{ github.event.action }}" in
                   "submitted")
@@ -93,7 +93,7 @@ jobs:
               MESSAGE+=$(printf "\n\n${{ github.event.pull_request.html_url }}")
               MESSAGE+=$(printf "\nFROM: ${{ github.event.pull_request.user.login }}")
           # プルリクエストコメント
-          elif [ -n "${{ github.event.comment }}" ] && [ -n "${{ github.event.issue.pull_request }}" ]; then
+          elif [ -v github.event.comment ] && [ -v github.event.issue.pull_request ]; then
               MESSAGE+="[ISSUE]プルリクエストに対するコメント"
               case "${{ github.event.action }}" in
               "created")
