@@ -106,6 +106,7 @@ jobs:
                   MESSAGE+="DEBUG[issue_comment: ${{ github.event.action }}]"
               esac
               BODY=${{ github.event.comment.body }}
+              BODY=$(echo $BODY | sed -e 's/\r//g' -e 's/\n/ /g')
               # BODY = ${BODY:0:30}
               MESSAGE+="[hr]${BODY}"
               # if [ ${#BODY} -gt 30 ]; then
