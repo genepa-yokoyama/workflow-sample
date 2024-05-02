@@ -23,79 +23,84 @@ jobs:
           CHATWORK_TOKEN: ${{ secrets.CHATWORK_TOKEN }}
           CHATWORK_ROOM_ID: ${{ secrets.CHATWORK_ROOM_ID }}
           USER_MAPPING: ${{ inputs.USER_MAPPING }}
+          GITHUB_ACTION: ${{ github.event.action }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          IS_MERGED: ${{ github.event.pull_request.merged }}
+          PR_USER_LOGIN: ${{ github.event.pull_request.user.login }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          COMMENT_USER_LOGIN: ${{ github.event.comment.user.login }}
+          COMMENT_URL: ${{ github.event.comment.html_url }}
         run: |
-          case "${{ github.event.action }}" in
+          GITHUB_USERS=()
+          if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
+            if [ "$GITHUB_ACTION" == "closed" ]; then
+              if [ "$IS_MERGED" == "true" ]; then
+                GITHUB_USERS+=("$PR_USER_LOGIN")
+              fi
+            else
+              GITHUB_USERS+=("${{ toJson(github.event.pull_request.requested_reviewers.*.login) }}")
+            fi
+          fi
+
+          TO_PART=""
+          for GITHUB_ID in "${GITHUB_USERS[@]}"
+          do
+            CHATWORK_ID=$(echo $USER_MAPPING | jq -r ".[\"$GITHUB_ID\"]")
+            if [ -n "$CHATWORK_ID" ]; then
+              if [ "$CHATWORK_ID" == "toall" ]; then
+                TO_PART+="[toall]"
+              else
+                TO_PART+="[To:${CHATWORK_ID}] $GITHUB_ID"
+              fi
+            fi
+          done
+
+          MESSAGE="[info][title]プルリクエスト通知: $PR_TITLE[/title]プルリクエスト"
+
+          case "$GITHUB_EVENT_NAME" in
+          "pull_request")
+              case "$GITHUB_ACTION" in
+              "opened"|"reopened")
+                  MESSAGE+="が作成されました"
+                  ;;
+              "edited"|"review_requested"|"assigned")
+                  MESSAGE+="が更新されました"
+                  ;;
+              "synchronize")
+                  MESSAGE+="に新しいコミットがプッシュされました。"
+                  ;;
               "closed")
-                  if [ ${{ github.event.pull_request.merged }} == true ]; then
-                      GITHUB_USERS='["${{ github.event.pull_request.user.login }}"]'
+                  if [ "$IS_MERGED" == "true" ]; then
+                      MESSAGE+="がマージされました"
                   else
-                      GITHUB_USERS='[]'
+                      MESSAGE+="が閉じられました"
                   fi
                   ;;
               *)
-                  GITHUB_USERS='${{ toJson(github.event.pull_request.requested_reviewers.*.login) }}'
-          esac
-
-          GITHUB_USER_IDS=$(echo "$GITHUB_USERS" | jq -r '.[]')
-          TO_PART=""
-          for GITHUB_ID in $GITHUB_USER_IDS
-          do
-          CHATWORK_ID=$(echo $USER_MAPPING | jq -r ".[\"$GITHUB_ID\"]")
-
-          if [ -n "$CHATWORK_ID" ]; then
-              if [ "$CHATWORK_ID" == "toall" ]; then
-              TO_PART+="[toall]"
-              else
-              TO_PART+="[To:${CHATWORK_ID}] $GITHUB_ID"
-              fi
-          fi
-          done
-
-          MESSAGE=$(printf "[info][title]プルリクエスト通知: ${{ github.event.pull_request.title }}[/title]\n")
-
-          # プルリクエスト
-          if [ -v github.event.pull_request ]; then
-              MESSAGE+="プルリクエスト"
-              # レビュー
-              if [ -v github.event.review ]; then
-                  MESSAGE+="に対するレビュー"
-                  case "${{ github.event.action }}" in
-                  "submitted")
-                      MESSAGE+="が作成されました"
-                      ;;
-                  *)
-                      MESSAGE+="が更新されました"
-                      MESSAGE+="DEBUG[pull_request.review: ${{ github.event.action }}]"
-                  esac
-              # プルリクエスト
-              else
-                  case "${{ github.event.action }}" in
-                  "opened"|"reopened")
-                      MESSAGE+="が作成されました"
-                      ;;
-                  "edited"|"review_requested"|"assigned")
-                      MESSAGE+="が更新されました"
-                      ;;
-                  "synchronize")
-                      MESSAGE+="に新しいコミットがプッシュされました。"
-                      ;;
-                  "closed")
-                      if [ "${{ github.event.pull_request.merged }}" == "true" ]; then
-                      MESSAGE+="がマージされました"
-                      else
-                      MESSAGE+="が閉じられました"
-                      fi
-                      ;;
-                  *)
-                      MESSAGE+="DEBUG[pull_request: ${{ github.event.action }}]"
-                  esac
-              fi
-              MESSAGE+=$(printf "\n\n${{ github.event.pull_request.html_url }}")
-              MESSAGE+=$(printf "\nFROM: ${{ github.event.pull_request.user.login }}")
-          # プルリクエストコメント
-          elif [ -v github.event.comment ] && [ -v github.event.issue.pull_request ]; then
-              MESSAGE+="[ISSUE]プルリクエストに対するコメント"
-              case "${{ github.event.action }}" in
+                  MESSAGE+="が何かされました"
+              esac
+              
+              MESSAGE+=$(printf "\n\n$PR_URL")
+              MESSAGE+=$(printf "\nFROM: $PR_USER_LOGIN")
+              ;;
+          "pull_request_review")
+              MESSAGE+="に対するレビュー"
+              case "$GITHUB_ACTION" in
+              "submitted")
+                  MESSAGE+="が作成されました"
+                  ;;
+              *)
+                  MESSAGE+="が更新されました"
+              esac
+              
+              MESSAGE+=$(printf "\n\n$PR_URL")
+              MESSAGE+=$(printf "\nFROM: $PR_USER_LOGIN")
+              ;;
+          "issue_comment")
+              MESSAGE+="[ISSUE]に対するコメント"
+              case "$GITHUB_ACTION" in
               "created")
                   MESSAGE+="が作成されました"
                   ;;
@@ -103,16 +108,18 @@ jobs:
                   MESSAGE+="が更新されました"
                   ;;
               *)
-                  MESSAGE+="DEBUG[issue_comment: ${{ github.event.action }}]"
+                  MESSAGE+="が何かされました"
               esac
-              MESSAGE+=$(printf "\n\n${{ github.event.comment.html_url }}")
-              MESSAGE+=$(printf "\nFROM: ${{ github.event.comment.user.login }}")
-          else
-              MESSAGE+="DEBUG[github.event: ${{ github.event.action }}]"
-              MESSAGE+="[/info][info][title]DEBUG: github.event[/title]"
-            #   MESSAGE+="${{ toJson(github.event) }}"
-          fi
 
+              MESSAGE+=$(printf "\n\n$COMMENT_URL")
+              MESSAGE+=$(printf "\nFROM: $COMMENT_USER_LOGIN")
+              ;;
+          *)
+              MESSAGE+="[/info][info][title]DEBUG: github.event[/title]"
+              MESSAGE+="${{ toJson(github.event) }}"
+          esac
+
+          MESSAGE+="[hr]DEBUG::$GITHUB_EVENT_NAME : $GITHUB_ACTION]"
           MESSAGE+="[/info]"
 
 
