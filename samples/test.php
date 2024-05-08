@@ -38,4 +38,9 @@ class Test
     {
         return $this->any;
     }
+
+    public function setAny(int|string|array|object $any): void
+    {
+        $this->any = $any;
+    }
 }
