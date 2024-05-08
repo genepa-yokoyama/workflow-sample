@@ -24,11 +24,6 @@ class Test
         ];
     }
 
-    protected function setProperty(int|string|array|object $any): void
-    {
-        $this->any = $any;
-    }
-
     public function setName(string $name): void
     {
         $this->name = $name;
