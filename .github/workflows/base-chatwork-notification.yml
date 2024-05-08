@@ -81,7 +81,7 @@ jobs:
                   fi
                   ;;
               *)
-                  MESSAGE+="が何かされました"
+                  MESSAGE+="で以下のアクションが実行されました"
                   MESSAGE+=$(printf "\n$GITHUB_EVENT_NAME -- $GITHUB_ACTION")
               esac
               
@@ -95,7 +95,7 @@ jobs:
                   MESSAGE+="が作成されました"
                   ;;
               *)
-                  MESSAGE+="が更新されました"
+                  MESSAGE+="で以下のアクションが実行されました"
                   MESSAGE+=$(printf "\n$GITHUB_EVENT_NAME -- $GITHUB_ACTION")
               esac
               
@@ -112,7 +112,7 @@ jobs:
                   MESSAGE+="が更新されました"
                   ;;
               *)
-                  MESSAGE+="が何かされました"
+                  MESSAGE+="で以下のアクションが実行されました"
                   MESSAGE+=$(printf "\n$GITHUB_EVENT_NAME -- $GITHUB_ACTION")
               esac
 
@@ -125,15 +125,6 @@ jobs:
           esac
 
           MESSAGE+="[/info]"
-
-          MESSAGE+="[info][title]DEBUG[/title]"
-          MESSAGE+=$(printf "USER_MAPPING: $USER_MAPPING\n
-            GITHUB_ACTION: $GITHUB_ACTION\n
-            GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME\n
-            GITHUB_EVENT_PATH: $GITHUB_EVENT_PATH\n
-            IS_MERGED: $IS_MERGED\n
-            PR_USER_LOGIN: $PR_USER_LOGIN\n 
-          [/info]")
 
           curl --request POST \
               --url https://api.chatwork.com/v2/rooms/${CHATWORK_ROOM_ID}/messages \
