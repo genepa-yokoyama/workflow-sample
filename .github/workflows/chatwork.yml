@@ -7,7 +7,6 @@ on:
       - reopened
       - edited
       - synchronize
-      - review_requested
       - closed
       - assigned
     branches:
