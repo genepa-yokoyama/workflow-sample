@@ -133,10 +133,6 @@ jobs:
             GITHUB_EVENT_PATH: $GITHUB_EVENT_PATH\n
             IS_MERGED: $IS_MERGED\n
             PR_USER_LOGIN: $PR_USER_LOGIN\n 
-            PR_TITLE: $PR_TITLE\n
-            PR_URL: $PR_URL\n
-            COMMENT_USER_LOGIN: $COMMENT_USER_LOGIN\n
-            COMMENT_URL: $COMMENT_URL\n
           [/info]")
 
           curl --request POST \
