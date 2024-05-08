@@ -1,6 +1,6 @@
 <?php
 
-class Test implements ExampleConstract
+class Test
 {
     protected int|string|array|object $any;
 
