@@ -34,19 +34,20 @@ jobs:
         run: |
           GITHUB_ACTION=${{ github.event.action }}
 
-          GITHUB_USERS=()
+          GITHUB_USERS=[]
           if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
             if [ "$GITHUB_ACTION" == "closed" ]; then
               if [ "$IS_MERGED" == "true" ]; then
-                GITHUB_USERS=("$PR_USER_LOGIN")
+                GITHUB_USERS='["${{ github.event.pull_request.user.login }}"]'
               fi
             else
               GITHUB_USERS="${{ toJson(github.event.pull_request.requested_reviewers.*.login) }}"
             fi
           fi
 
+          GITHUB_USER_IDS=$(echo "$GITHUB_USERS" | jq -r '.[]')
           TO_PART=""
-          for GITHUB_ID in "${GITHUB_USERS[@]}"
+          for GITHUB_ID in $GITHUB_USER_IDS
           do
             CHATWORK_ID=$(echo $USER_MAPPING | jq -r ".[\"$GITHUB_ID\"]")
             if [ -n "$CHATWORK_ID" ]; then
@@ -128,6 +129,8 @@ jobs:
 
           MESSAGE+="[info][title]DEBUG[/title]"
           MESSAGE+=$(printf "USER_MAPPING: $USER_MAPPING\n
+            GITHUB_USERS: $GITHUB_USERS\n
+            GITHUB_USER_IDS: $GITHUB_USER_IDS\n
             GITHUB_ACTION: $GITHUB_ACTION\n
             GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME\n
             GITHUB_EVENT_PATH: $GITHUB_EVENT_PATH\n
