@@ -80,6 +80,7 @@ jobs:
                   ;;
               *)
                   MESSAGE+="が何かされました"
+                  MESSAGE+=$(printf "\n$GITHUB_EVENT_NAME -- $GITHUB_ACTION")
               esac
               
               MESSAGE+=$(printf "\n\n$PR_URL")
@@ -93,6 +94,7 @@ jobs:
                   ;;
               *)
                   MESSAGE+="が更新されました"
+                  MESSAGE+=$(printf "\n$GITHUB_EVENT_NAME -- $GITHUB_ACTION")
               esac
               
               MESSAGE+=$(printf "\n\n$PR_URL")
@@ -109,6 +111,7 @@ jobs:
                   ;;
               *)
                   MESSAGE+="が何かされました"
+                  MESSAGE+=$(printf "\n$GITHUB_EVENT_NAME -- $GITHUB_ACTION")
               esac
 
               MESSAGE+=$(printf "\n\n$COMMENT_URL")
@@ -119,9 +122,21 @@ jobs:
               MESSAGE+="${{ toJson(github.event) }}"
           esac
 
-          MESSAGE+="[hr]DEBUG::$GITHUB_EVENT_NAME : $GITHUB_ACTION]"
+          MESSAGE+="[hr]DEBUG -- $GITHUB_EVENT_NAME : $GITHUB_ACTION"
           MESSAGE+="[/info]"
 
+          MESSAGE+="[info][title]DEBUG[/title]"
+          MESSAGE+=$(printf "USER_MAPPING: $USER_MAPPING\n
+            GITHUB_ACTION: $GITHUB_ACTION\n
+            GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME\n
+            GITHUB_EVENT_PATH: $GITHUB_EVENT_PATH\n
+            IS_MERGED: $IS_MERGED\n
+            PR_USER_LOGIN: $PR_USER_LOGIN\n 
+            PR_TITLE: $PR_TITLE\n
+            PR_URL: $PR_URL\n
+            COMMENT_USER_LOGIN: $COMMENT_USER_LOGIN\n
+            COMMENT_URL: $COMMENT_URL\n
+          [/info]")
 
           curl --request POST \
               --url https://api.chatwork.com/v2/rooms/${CHATWORK_ROOM_ID}/messages \
