@@ -34,13 +34,8 @@ class Test
         return $this->name;
     }
 
-    public function sayHello(): string
+    public function getAny(): int|string|array|object
     {
-        return "Hello! {$this->name}!";
-    }
-
-    public function sayGoodbye(): string
-    {
-        return "Goodbye! {$this->name}!";
+        return $this->any;
     }
 }
