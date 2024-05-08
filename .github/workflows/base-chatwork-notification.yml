@@ -37,10 +37,10 @@ jobs:
           if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
             if [ "$GITHUB_ACTION" == "closed" ]; then
               if [ "$IS_MERGED" == "true" ]; then
-                GITHUB_USERS+=("$PR_USER_LOGIN")
+                GITHUB_USERS=("$PR_USER_LOGIN")
               fi
             else
-              GITHUB_USERS+=("${{ toJson(github.event.pull_request.requested_reviewers.*.login) }}")
+              GITHUB_USERS="${{ toJson(github.event.pull_request.requested_reviewers.*.login) }}"
             fi
           fi
 
