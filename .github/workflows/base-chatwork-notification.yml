@@ -129,8 +129,6 @@ jobs:
 
           MESSAGE+="[info][title]DEBUG[/title]"
           MESSAGE+=$(printf "USER_MAPPING: $USER_MAPPING\n
-            GITHUB_USERS: $GITHUB_USERS\n
-            GITHUB_USER_IDS: $GITHUB_USER_IDS\n
             GITHUB_ACTION: $GITHUB_ACTION\n
             GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME\n
             GITHUB_EVENT_PATH: $GITHUB_EVENT_PATH\n
