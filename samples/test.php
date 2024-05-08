@@ -1,7 +1,6 @@
 <?php
 
-
-class Test
+class Test implements ExampleConstract
 {
     public function __construct(
         protected string $name = 'World',
