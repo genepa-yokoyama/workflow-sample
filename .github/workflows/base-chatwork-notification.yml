@@ -23,7 +23,6 @@ jobs:
           CHATWORK_TOKEN: ${{ secrets.CHATWORK_TOKEN }}
           CHATWORK_ROOM_ID: ${{ secrets.CHATWORK_ROOM_ID }}
           USER_MAPPING: ${{ inputs.USER_MAPPING }}
-          GITHUB_ACTION: ${{ github.event.action }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_EVENT_PATH: ${{ github.event_path }}
           IS_MERGED: ${{ github.event.pull_request.merged }}
@@ -33,6 +32,8 @@ jobs:
           COMMENT_USER_LOGIN: ${{ github.event.comment.user.login }}
           COMMENT_URL: ${{ github.event.comment.html_url }}
         run: |
+          GITHUB_ACTION=${{ github.event.action }}
+
           GITHUB_USERS=()
           if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
             if [ "$GITHUB_ACTION" == "closed" ]; then
