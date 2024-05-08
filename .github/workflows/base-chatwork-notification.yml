@@ -34,7 +34,7 @@ jobs:
         run: |
           GITHUB_ACTION=${{ github.event.action }}
 
-          GITHUB_USERS=[]
+          GITHUB_USERS='[]'
           if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
             if [ "$GITHUB_ACTION" == "closed" ]; then
               if [ "$IS_MERGED" == "true" ]; then
