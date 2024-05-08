@@ -124,7 +124,6 @@ jobs:
               MESSAGE+="${{ toJson(github.event) }}"
           esac
 
-          MESSAGE+="[hr]DEBUG -- $GITHUB_EVENT_NAME : $GITHUB_ACTION"
           MESSAGE+="[/info]"
 
           MESSAGE+="[info][title]DEBUG[/title]"
