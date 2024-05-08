@@ -32,7 +32,7 @@ jobs:
           COMMENT_USER_LOGIN: ${{ github.event.comment.user.login }}
           COMMENT_URL: ${{ github.event.comment.html_url }}
         run: |
-          GITHUB_ACTION=${{ github.event.action }}
+          GITHUB_ACTION="${{ github.event.action }}"
 
           GITHUB_USERS='[]'
           if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
@@ -41,7 +41,7 @@ jobs:
                 GITHUB_USERS='["${{ github.event.pull_request.user.login }}"]'
               fi
             else
-              GITHUB_USERS="${{ toJson(github.event.pull_request.requested_reviewers.*.login) }}"
+              GITHUB_USERS='${{ toJson(github.event.pull_request.requested_reviewers.*.login) }}'
             fi
           fi
 
