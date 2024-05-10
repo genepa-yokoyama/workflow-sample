@@ -1,5 +1,6 @@
 <?php
 
+# Test
 class Test
 {
     protected int|string|array|object $any;
